@@ -1,0 +1,3 @@
+,NLQ,PREDICTED SQL,GOLD SQL,DATABASE
+0,What are all distinct countries where singers above age 20 are from?,SELECT DISTINCT Country FROM singer WHERE Age > 20,SELECT DISTINCT country FROM singer WHERE age  >  20,concert_singer
+1,What are  the different countries with singers above age 20?,SELECT DISTINCT Country FROM singer WHERE Age > 20,SELECT DISTINCT country FROM singer WHERE age  >  20,concert_singer
