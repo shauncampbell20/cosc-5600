@@ -588,7 +588,7 @@ def debuger(test_sample_text,database,sql):
   return prompt
 
 def Gemini_generation(prompt):
-  print('sleeping 10 seconds for rate limit')
+  print('...sleeping 10 seconds for rate limit...')
   time.sleep(10)
   response = client.models.generate_content(
     model="gemini-2.5-flash",
@@ -611,7 +611,7 @@ def Gemini_generation(prompt):
   return response.text
 
 def Gemini_debug(prompt):
-  print('sleeping 10 seconds for rate limit')
+  print('...sleeping 10 seconds for rate limit...')
   time.sleep(10)
   response = client.models.generate_content(
     model="gemini-2.5-flash",
@@ -641,11 +641,10 @@ if __name__ == '__main__':
     print(f"Number of data samples {val_df.shape[0]}")
     CODEX = []
 
-    for index, row in val_df.iloc[5:7].iterrows():
+    for index, row in val_df.iloc[8:10].iterrows():
         print(f"index is {index}")
-        print(row['query'])
-        print(row['question'])
-        print('---generate schema links')
+        print('***Question: ',row['question'])
+        print('***generate schema links')
         schema_links = None
         while schema_links is None:
             try:
@@ -661,7 +660,7 @@ if __name__ == '__main__':
             print("Slicing error for the schema_linking module")
             schema_links = "[]"
         #print(schema_links)
-        print('---generate question classification')
+        print('***generate question classification')
         classification = None
         while classification is None:
             try:
@@ -678,8 +677,7 @@ if __name__ == '__main__':
             predicted_class = '"NESTED"'
         #print(classification)
         if '"EASY"' in predicted_class:
-            print("EASY")
-            print('---generate Easy prompt')
+            print('***generate Easy prompt')
             SQL = None
             while SQL is None:
                 try:
@@ -689,8 +687,7 @@ if __name__ == '__main__':
                     time.sleep(3)
                     pass
         elif '"NON-NESTED"' in predicted_class:
-            print("NON-NESTED")
-            print('---generate Medium prompt')
+            print('***generate Medium prompt')
             SQL = None
             while SQL is None:
                 try:
@@ -707,8 +704,7 @@ if __name__ == '__main__':
                 SQL = "SELECT"
         else:
             sub_questions = classification.split('questions = ["')[1].split('"]')[0]
-            print("NESTED")
-            print('---generate Hard prompt')
+            print('***generate Hard prompt')
             SQL = None
             while SQL is None:
                 try:
@@ -724,8 +720,7 @@ if __name__ == '__main__':
                 print(e)
                 print("SQL slicing error")
                 SQL = "SELECT"
-        print(SQL)
-        print('---generate Debug prompt')
+        print('***generate Debug prompt')
         debugged_SQL = None
         while debugged_SQL is None:
             try:
@@ -734,8 +729,10 @@ if __name__ == '__main__':
                 print(e)
                 time.sleep(3)
                 pass
-        SQL = 'SELECT '+debugged_SQL
-        print(SQL)
+        SQL = debugged_SQL.replace('```sqlite','').replace('```','').strip()
+        if SQL[:7] != 'SELECT ':
+          SQL = 'SELECT '+SQL
+        print('***Final SQL:', SQL)
         CODEX.append([row['question'], SQL, row['query'], row['db_id']])
         #break
     df = pd.DataFrame(CODEX, columns=['NLQ', 'PREDICTED SQL', 'GOLD SQL', 'DATABASE'])
