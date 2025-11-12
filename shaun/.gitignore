@@ -1,0 +1,4 @@
+.venv/
+gemini-key.txt
+predicted_sql.txt
+results.csv
