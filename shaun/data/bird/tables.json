@@ -10,10 +10,10 @@
         ],
         "table_names": [
             "customers",
-            "gas stations",
+            "gasstations",
             "products",
-            "transactions",
-            "year and month"
+            "transactions_1k",
+            "yearmonth"
         ],
         "column_names_original": [
             [
@@ -252,11 +252,11 @@
             "account",
             "card",
             "client",
-            "disposition",
+            "disp",
             "district",
             "loan",
             "order",
-            "transaction"
+            "trans"
         ],
         "column_names_original": [
             [
@@ -836,11 +836,11 @@
             "drivers",
             "seasons",
             "races",
-            "constructor results",
-            "constructor standings",
-            "driver standings",
-            "lap times",
-            "pit stops",
+            "constructorResults",
+            "constructorStandings",
+            "driverStandings",
+            "lapTimes",
+            "pitStops",
             "qualifying",
             "status",
             "results"
@@ -1816,8 +1816,8 @@
             "schools"
         ],
         "table_names": [
-            "free and reduced-price meals",
-            "sat scores",
+            "frpm",
+            "satscores",
             "schools"
         ],
         "column_names_original": [
@@ -2397,7 +2397,7 @@
             ],
             [
                 2,
-                "Mail Street"
+                "MailStreet"
             ],
             [
                 2,
@@ -2664,10 +2664,10 @@
         ],
         "table_names": [
             "cards",
-            "foreign data",
+            "foreign_data",
             "legalities",
             "sets",
-            "set translations",
+            "set_translations",
             "ruling"
         ],
         "column_names_original": [
@@ -3759,12 +3759,12 @@
             "Match"
         ],
         "table_names": [
-            "Player Attributes",
+            "Player_Attributes",
             "Player",
             "League",
             "Country",
             "Team",
-            "Team Attributes",
+            "Team_Attributes",
             "Match"
         ],
         "column_names_original": [
@@ -6497,7 +6497,7 @@
         "table_names": [
             "Event",
             "Major",
-            "Zip Code",
+            "Zip_Code",
             "Attendance",
             "Budget",
             "Expense",
@@ -7021,9 +7021,9 @@
             "publisher",
             "race",
             "superhero",
-            "hero attribute",
+            "hero_attribute",
             "superpower",
-            "hero power"
+            "hero_power"
         ],
         "column_names_original": [
             [
@@ -7391,8 +7391,8 @@
         "table_names": [
             "badges",
             "comments",
-            "post History",
-            "post Links",
+            "postHistory",
+            "postLinks",
             "posts",
             "tags",
             "users",
