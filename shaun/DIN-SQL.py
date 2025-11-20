@@ -9,7 +9,7 @@ from prompt_templates import (
     )
 import argparse
 import sqlite3
-
+from datetime import datetime
 
 with open('gemini-key.txt','r') as f:
   API_KEY = f.read()
@@ -193,8 +193,8 @@ def debuger(test_sample_text,database,sql):
 7) Use GROUP BY on one column only.
 
 """
-  fields = find_fields_MYSQL_like(database)
-  fields += "Foreign_keys = " + find_foreign_keys_MYSQL_like(database) + '\n'
+  fields = find_fields_MYSQL_like(database, schema)
+  fields += "Foreign_keys = " + find_foreign_keys_MYSQL_like(database, foreign) + '\n'
   fields += "Primary_keys = " + find_primary_keys_MYSQL_like(database, primary)
   prompt = instruction + fields+ '#### Question: ' + test_sample_text + '\n#### SQLite SQL QUERY\n' + sql +'\n#### SQLite FIXED SQL QUERY\nSELECT'
   return prompt
@@ -242,7 +242,7 @@ def Gemini_debug(prompt):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', help='Path to dataset files')
-    parser.add_argument('--output', help='Desired path to output file')
+    parser.add_argument('--output', help='Desired path to output directory')
     args = parser.parse_args()
     
     if args.dataset and args.output:
@@ -251,8 +251,15 @@ if __name__ == '__main__':
         DATABASES = os.path.join(args.dataset, 'database')
         OUTPUT_FILE = args.output
         EXAMPLE_SCHEMA = os.path.join(args.dataset,'example_tables.json')
+        dataset_name = os.path.split(args.dataset)[-1]
+        if not os.path.exists(args.output):
+            try:
+                os.mkdir(args.output)
+            except:
+                raise Exception("Unable to find/create "+args.output)
+        output_file = os.path.join(args.output, dataset_name+'_results_'+datetime.today().strftime('%Y%m%d%H%M%S')+'.csv')
     else:
-        raise Exception("Please use this format python CoT.py --dataset data/ --output predicted_sql.txt")
+        raise Exception("Please use this format python CoT.py --dataset ./data/dataset --output ./results")
       
     schema,primary,foreign = creatiing_schema(DATASET_SCHEMA)
     example_schema,example_primary,example_foreign = creatiing_schema(EXAMPLE_SCHEMA)
@@ -263,7 +270,7 @@ if __name__ == '__main__':
     print(f"Number of data samples {val_df.shape[0]}")
     CODEX = []
 
-    for index, row in val_df.iloc[8:10].iterrows():
+    for index, row in val_df.iloc[6:40].iterrows():
         print(f"index is {index}")
         print('***Question: ',row['question'])
         
@@ -345,7 +352,7 @@ if __name__ == '__main__':
                     time.sleep(3)
                     pass
             try:
-                SQL = SQL.split("SQL: ")[1]
+                SQL = SQL.split("SQL:")[1]
             except Exception as e:
                 print(e)
                 print("SQL slicing error")
@@ -365,11 +372,8 @@ if __name__ == '__main__':
         if SQL[:7] != 'SELECT ':
           SQL = 'SELECT '+SQL
         print('***Final SQL:', SQL)
-        CODEX.append([row['question'], SQL, row['query'], row['db_id']])
+        CODEX.append([index, row['question'], SQL, row['query'], row['db_id']])
 
-    df = pd.DataFrame(CODEX, columns=['NLQ', 'PREDICTED SQL', 'GOLD SQL', 'DATABASE'])
-    df.to_csv("./results.csv")
-    results = df['PREDICTED SQL'].tolist()
-    with open(OUTPUT_FILE, 'w') as f:
-        for line in results:
-            f.write(f"{line}\n")
+        # save results every iter in case of crash
+        df = pd.DataFrame(CODEX, columns=['Index', 'NLQ', 'PREDICTED SQL', 'GOLD SQL', 'DATABASE'])
+        df.to_csv(output_file, index=False)

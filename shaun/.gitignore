@@ -2,3 +2,7 @@
 gemini-key.txt
 predicted_sql.txt
 results.csv
+data/spider/database/
+data/bird/database/
+__pycache__/
+results/
