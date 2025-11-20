@@ -7,6 +7,9 @@ import os
 import numpy as np
 
 def calculate_ex(db_path, predicted, gold):
+    '''Calculate execution accuracy for a predicted query versus gold query
+       Return 1 if execution results match else 0
+    '''
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     try:
@@ -46,6 +49,7 @@ if __name__ == "__main__":
     else:
         difficulty_key = []
 
+    # evaluate each pair of predicted/gold queries
     res = []
     for ind in tqdm(results.index):
         predicted = results.loc[ind,'PREDICTED SQL']
