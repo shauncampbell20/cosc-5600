@@ -24,7 +24,7 @@ shaun/
 ├── gemini-key.txt
 ├── DIN-SQL.py
 ├── prompt_templates.py
-│
+├── .venv/
 ├── data/
 │   ├── spider
 │	  		├── dev.json
@@ -41,11 +41,24 @@ shaun/
 ```
 
 ## Run
-Run these commands (I have it set up just to do 2 questions for testing purposes, line 644)
+Run these commands (change indexes in line 273)
 ```
-python DIN-SQL.py --dataset ./data/spider/ --output predicted_sql.txt
+# Spider dataset
+python DIN-SQL.py --dataset ./data/spider/ --output ./results
 
-python DIN-SQL.py --dataset ./data/bird/ --output predicted_sql.txt
+# BIRD dataset
+python DIN-SQL.py --dataset ./data/bird/ --output ./results
 ```
+
+## Evaluation
+Run these commands. Replace <spider_result_file.csv> and <bird_results_file.csv> with the files generated with the previous commands.
+```
+# Spider dataset
+python evaluate.py --results "./results/<spider_result_file.csv>" --databases ./data/spider/database
+
+# BIRD dataset
+python evaluate.py --results "./results/<bird_result_file.csv>" --databases ./data/bird/database
+```
+
 
 
