@@ -11,7 +11,7 @@ pip install -r requirements.txt
 ## Setup
 1. Get a gemini API key and put it in a text file called "gemini-key.txt".
 2. Download and unzip [Spider dataset](https://drive.google.com/file/d/1403EGqzIDoHMdQF4c9Bkyl7dZLZ5Wt6J/view)
-3. Copy the contents of /spider_data/database to /data/spider/database
+3. Copy the contents of /spider_data/test_database to /data/spider/database
 4. Download and unzip [BIRD mini dev](https://drive.usercontent.google.com/downloadid=1UJyA6I6pTmmhYpwdn8iT9QKrcJqSQAcX&export=download)
 5. Copy the contents of /data_minidev/MINIDEV/dev_databases to data/bird/databases
 
@@ -62,33 +62,6 @@ python evaluate.py --results "./results/<bird_result_file.csv>" --databases ./da
 
 ## Results
 
-### Spider Dev Set
-```
----- EXECUTION ACCURACY -----
-0.8355899419729207
-
----- BY DATABASE -----
-concert_singer : 0.9555555555555556
-pets_1 : 0.8571428571428571
-car_1 : 0.7934782608695652
-flight_2 : 0.85
-employee_hire_evaluation : 0.9473684210526315
-cre_Doc_Template_Mgt : 0.9761904761904762
-course_teach : 0.9
-museum_visit : 0.8333333333333334
-wta_1 : 0.7580645161290323
-battle_death : 0.8125
-student_transcripts_tracking : 0.6923076923076923
-tvshow : 0.8387096774193549
-poker_player : 0.975
-voter_1 : 0.9333333333333333
-world_1 : 0.75
-orchestra : 0.95
-network_1 : 0.6964285714285714
-dog_kennels : 0.8048780487804879
-singer : 0.9666666666666667
-real_estate_properties : 0.75
-```
 ### Spider Test Set
 ```
 ---- EXECUTION ACCURACY -----
@@ -160,5 +133,6 @@ simple 0.6148648648648649
 moderate 0.384
 challenging 0.28431372549019607
 ```
+
 
 
