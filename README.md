@@ -1,3 +1,5 @@
+This repository is an implementation of [DIN-SQL](https://github.com/MohammadrezaPourreza/Few-shot-NL2SQL-with-prompting) by Mohammadreza Pourreza and Davood Rafiei.
+
 ## Environment
 
 ```
@@ -9,7 +11,7 @@ pip install -r requirements.txt
 ```
 
 ## Setup
-1. Get a gemini API key and put it in a text file called "gemini-key.txt".
+1. Get a [Gemini API key](https://aistudio.google.com/app/api-keys) and put it in a text file called "gemini-key.txt".
 2. Download and unzip [Spider dataset](https://drive.google.com/file/d/1403EGqzIDoHMdQF4c9Bkyl7dZLZ5Wt6J/view)
 3. Copy the contents of /spider_data/test_database to /data/spider/database
 4. Download and unzip [BIRD mini dev](https://drive.usercontent.google.com/downloadid=1UJyA6I6pTmmhYpwdn8iT9QKrcJqSQAcX&export=download)
@@ -18,7 +20,7 @@ pip install -r requirements.txt
 Directory should look like this:
 
 ```
-shaun/
+
 ├── README.md
 ├── requirements.txt
 ├── gemini-key.txt
@@ -57,7 +59,7 @@ Run these commands. Replace <spider_result_file.csv> and <bird_results_file.csv>
 python evaluate.py --results "./results/<spider_result_file.csv>" --databases ./data/spider/database
 
 # BIRD dataset
-python evaluate.py --results "./results/<bird_result_file.csv>" --databases ./data/bird/database
+python evaluate.py --results "./results/<bird_result_file.csv>" --databases ./data/bird/database --difficulties ./results/bird_difficulties.txt
 ```
 
 ## Results
@@ -133,6 +135,7 @@ simple 0.6148648648648649
 moderate 0.384
 challenging 0.28431372549019607
 ```
+
 
 
 
