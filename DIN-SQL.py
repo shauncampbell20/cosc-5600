@@ -21,10 +21,12 @@ def load_data(DATASET):
     '''
     return pd.read_json(DATASET)
 
-def hard_prompt_maker(test_sample_text,database,schema_links,sub_questions):
+def hard_prompt_maker(test_sample_text,database,schema_links,sub_questions,hint=None):
     '''Build a prompt for Hard questions
     '''
     instruction = "# Use the intermediate representation and the schema links to generate the SQL queries for each of the questions.\n"
+    if hint:
+        instruction += "Hint helps you to write the correct sqlite SQL query.\n"
     fields = find_fields_MYSQL_like("college_2", example_schema)
     fields += "Foreign_keys = " + find_foreign_keys_MYSQL_like("college_2", example_foreign) + '\n'
     fields += find_fields_MYSQL_like(database, schema)
@@ -32,31 +34,44 @@ def hard_prompt_maker(test_sample_text,database,schema_links,sub_questions):
     stepping = f'''\nA: Let's think step by step. "{test_sample_text}" can be solved by knowing the answer to the following sub-question "{sub_questions}".'''
     fields += "\n"
     fields += get_sample_rows(database)
-    prompt = instruction +fields + hard_prompt + 'Q: "' + test_sample_text + '"' + '\nschema_links: ' + schema_links + stepping +'\nThe SQL query for the sub-question"'
+    prompt = instruction +fields + hard_prompt + 'Q: "' + test_sample_text + '"' + '\nschema_links: ' + schema_links 
+    if hint:
+        prompt += '\nHint: '+hint
+    prompt += stepping +'\nThe SQL query for the sub-question"'
     return prompt
 
-def medium_prompt_maker(test_sample_text,database,schema_links):
+def medium_prompt_maker(test_sample_text,database,schema_links,hint=None):
     '''Build a prompt for Medium questions
     '''
     instruction = "# Use the the schema links and Intermediate_representation to generate the SQL queries for each of the questions.\n"
+    if hint:
+        instruction += "Hint helps you to write the correct sqlite SQL query.\n"
     fields = find_fields_MYSQL_like("college_2", example_schema)
     fields += "Foreign_keys = " + find_foreign_keys_MYSQL_like("college_2", example_foreign) + '\n'
     fields += find_fields_MYSQL_like(database, schema)
     fields += "Foreign_keys = " + find_foreign_keys_MYSQL_like(database, foreign) + '\n'
     fields += "\n"
     fields += get_sample_rows(database)
-    prompt = instruction +fields + medium_prompt + 'Q: "' + test_sample_text + '\nSchema_links: ' + schema_links + '\nA: Let’s think step by step.'
+    prompt = instruction +fields + medium_prompt + 'Q: "' + test_sample_text + '\nSchema_links: ' + schema_links 
+    if hint:
+        prompt += '\nHint: '+hint
+    prompt += '\nA: Let’s think step by step.'
     return prompt
 
-def easy_prompt_maker(test_sample_text,database,schema_links):
+def easy_prompt_maker(test_sample_text,database,schema_links,hint=None):
     '''Build a prompt for Easy questions
     '''
     instruction = "# Use the the schema links to generate the SQL queries for each of the questions.\n"
+    if hint:
+        instruction += "Hint helps you to write the correct sqlite SQL query.\n"
     fields = find_fields_MYSQL_like("college_2", example_schema)
     fields += find_fields_MYSQL_like(database, schema)
     fields += "\n"
     fields += get_sample_rows(database)
-    prompt = instruction +fields + easy_prompt + 'Q: "' + test_sample_text + '\nSchema_links: ' + schema_links + '\nSQL:'
+    prompt = instruction +fields + easy_prompt + 'Q: "' + test_sample_text + '\nSchema_links: ' + schema_links
+    if hint:
+        prompt += '\nHint: '+hint
+    prompt+='\nSQL:'
     return prompt
   
 def classification_prompt_maker(test_sample_text,database,schema_links):
@@ -182,26 +197,25 @@ def get_sample_rows(db_name):
     return s
 
 def debuger(test_sample_text,database,sql):
-  instruction = """#### For the given question, use the provided tables, columns, foreign keys, and primary keys to fix the given SQLite SQL QUERY for any issues. If there are any problems, fix them. If there are no issues, return the SQLite SQL QUERY as is.
-#### Use the following instructions for fixing the SQL QUERY:
-1) Use the database values that are explicitly mentioned in the question.
-2) Pay attention to the columns that are used for the JOIN by using the Foreign_keys.
-3) Use DESC and DISTINCT when needed.
-4) Pay attention to the columns that are used for the GROUP BY statement.
-5) Pay attention to the columns that are used for the SELECT statement.
-6) Only change the GROUP BY clause when necessary (Avoid redundant columns in GROUP BY).
-7) Use GROUP BY on one column only.
+    instruction = """#### For the given question, use the provided tables, columns, foreign keys, and primary keys to fix the given SQLite SQL QUERY for any issues. If there are any problems, fix them. If there are no issues, return the SQLite SQL QUERY as is.
+    #### Use the following instructions for fixing the SQL QUERY:
+    1) Use the database values that are explicitly mentioned in the question.
+    2) Pay attention to the columns that are used for the JOIN by using the Foreign_keys.
+    3) Use DESC and DISTINCT when needed.
+    4) Pay attention to the columns that are used for the GROUP BY statement.
+    5) Pay attention to the columns that are used for the SELECT statement.
+    6) Only change the GROUP BY clause when necessary (Avoid redundant columns in GROUP BY).
+    7) Use GROUP BY on one column only.
 
-"""
-  fields = find_fields_MYSQL_like(database, schema)
-  fields += "Foreign_keys = " + find_foreign_keys_MYSQL_like(database, foreign) + '\n'
-  fields += "Primary_keys = " + find_primary_keys_MYSQL_like(database, primary)
-  prompt = instruction + fields+ '#### Question: ' + test_sample_text + '\n#### SQLite SQL QUERY\n' + sql +'\n#### SQLite FIXED SQL QUERY\nSELECT'
-  return prompt
+    """
+    fields = find_fields_MYSQL_like(database, schema)
+    fields += "Foreign_keys = " + find_foreign_keys_MYSQL_like(database, foreign) + '\n'
+    fields += "Primary_keys = " + find_primary_keys_MYSQL_like(database, primary)
+    prompt = instruction + fields+ '#### Question: ' + test_sample_text + '\n#### SQLite SQL QUERY\n' + sql +'\n#### SQLite FIXED SQL QUERY\nSELECT'
+    return prompt
 
 def Gemini_generation(prompt):
-    print('...sleeping 10 seconds for rate limit...')
-    time.sleep(10)
+    time.sleep(1)
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         config=types.GenerateContentConfig(
@@ -214,14 +228,10 @@ def Gemini_generation(prompt):
             ),
         contents=prompt
     )
-    print('-----------GEMINI RESPONSE---------------')
-    print(response.text)
-    print('-----------------------------------------')
     return response.text
 
 def Gemini_debug(prompt):
-    print('...sleeping 10 seconds for rate limit...')
-    time.sleep(10)
+    time.sleep(1)
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         config=types.GenerateContentConfig(
@@ -234,9 +244,6 @@ def Gemini_debug(prompt):
         ),
     contents=prompt
     )
-    print('-----------GEMINI RESPONSE---------------')
-    print(response.text)
-    print('-----------------------------------------')
     return response.text
 
 if __name__ == '__main__':
@@ -270,11 +277,9 @@ if __name__ == '__main__':
     print(f"Number of data samples {val_df.shape[0]}")
     CODEX = []
 
-    for index, row in val_df.iloc[6:40].iterrows():
+    for index, row in val_df.iterrows():
         print(f"index is {index}")
         print('***Question: ',row['question'])
-        
-        # Schema links
         print('***generate schema links')
         schema_links = None
         while schema_links is None:

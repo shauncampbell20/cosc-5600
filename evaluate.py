@@ -11,15 +11,17 @@ def calculate_ex(db_path, predicted, gold):
        Return 1 if execution results match else 0
     '''
     conn = sqlite3.connect(db_path)
+    conn.text_factory = lambda b: b.decode(errors = 'ignore')
     cursor = conn.cursor()
     try:
         cursor.execute(predicted)
-    except OperationalError:
-        print('error')
+        predicted_res = cursor.fetchall()
+        cursor.execute(gold)
+        ground_truth_res = cursor.fetchall()
+    except OperationalError as e:
+        print(predicted)
+        print(e)
         return 0
-    predicted_res = cursor.fetchall()
-    cursor.execute(gold)
-    ground_truth_res = cursor.fetchall()
     conn.close()
     res = 0
     if set(predicted_res) == set(ground_truth_res):
@@ -51,15 +53,23 @@ if __name__ == "__main__":
 
     # evaluate each pair of predicted/gold queries
     res = []
+    by_db = {}
+    for database_name in results['DATABASE'].unique():
+        by_db[database_name] = []
     for ind in tqdm(results.index):
         predicted = results.loc[ind,'PREDICTED SQL']
         gold = results.loc[ind,'GOLD SQL']
         database_name = results.loc[ind, 'DATABASE']
         db_path = os.path.join(DATABASES, database_name, database_name+'.sqlite')
-        res.append(calculate_ex(db_path, predicted, gold)) 
+        ex = calculate_ex(db_path, predicted, gold)
+        res.append(ex)
+        by_db[database_name].append(ex)
 
     print('---- EXECUTION ACCURACY -----')
     print(sum(res)/len(res))
+    print('\n')
+    for db_name in by_db.keys():
+        print(db_name,':',sum(by_db[db_name])/len(by_db[db_name]))
     
     if difficulty_key:
         difficulty_res = {}
