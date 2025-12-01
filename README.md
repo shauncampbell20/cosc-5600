@@ -7,7 +7,7 @@ python -m venv .venv
 .venv\scripts\activate
 pip install -r requirements.txt
 
-# or use conda if you want
+# or use conda
 ```
 
 ## Setup
@@ -43,7 +43,7 @@ Directory should look like this:
 ```
 
 ## Run
-Run these commands (change indexes in line 273)
+Run these commands (change indexes in line 280)
 ```
 # Spider dataset
 python DIN-SQL.py --dataset ./data/spider/ --output ./results
@@ -135,6 +135,7 @@ simple 0.6148648648648649
 moderate 0.384
 challenging 0.28431372549019607
 ```
+
 
 
 
