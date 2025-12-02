@@ -12,10 +12,14 @@ pip install -r requirements.txt
 
 ## Setup
 1. Get a [Gemini API key](https://aistudio.google.com/app/api-keys) and put it in a text file called "gemini-key.txt".
-2. Download and unzip [Spider dataset](https://drive.google.com/file/d/1403EGqzIDoHMdQF4c9Bkyl7dZLZ5Wt6J/view)
-3. Copy the contents of /spider_data/test_database to /data/spider/database
-4. Download and unzip [BIRD mini dev](https://drive.usercontent.google.com/downloadid=1UJyA6I6pTmmhYpwdn8iT9QKrcJqSQAcX&export=download)
-5. Copy the contents of /data_minidev/MINIDEV/dev_databases to data/bird/databases
+    1. Sign in to your Google account if prompted.
+    2. Click "Create API key" in the upper right corner.
+    3. Name the key, then select a project or create a new project
+    4. **Note: a free-tier Gemini API key is limited to 10 requests per minute/250,000 tokens per minute/250 requests per day.**
+3. Download and unzip [Spider dataset](https://drive.google.com/file/d/1403EGqzIDoHMdQF4c9Bkyl7dZLZ5Wt6J/view)
+4. Copy the contents of /spider_data/test_database to /data/spider/database
+5. Download and unzip [BIRD mini dev](https://drive.usercontent.google.com/downloadid=1UJyA6I6pTmmhYpwdn8iT9QKrcJqSQAcX&export=download)
+6. Copy the contents of /data_minidev/MINIDEV/dev_databases to data/bird/databases
 
 Directory should look like this:
 
@@ -135,6 +139,7 @@ simple 0.6148648648648649
 moderate 0.384
 challenging 0.28431372549019607
 ```
+
 
 
 
